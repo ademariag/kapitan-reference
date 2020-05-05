@@ -9,3 +9,4 @@
 |[pritunl](../pritunl/docs/README.md)|
 |[sock-shop](../sock-shop/docs/README.md)|
 |[tutorial](../tutorial/docs/README.md)|
+|[vault](../vault/docs/README.md)|
