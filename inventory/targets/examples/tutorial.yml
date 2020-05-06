@@ -1,9 +1,0 @@
-classes:
-  - common
-  - projects.localhost.kubernetes.kind
-  - applications.microservices
-  - components.echo-server
-
-
-parameters:
-  target_name: tutorial
