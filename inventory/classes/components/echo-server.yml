@@ -82,6 +82,9 @@ parameters:
         config:
           mount: /opt/echo-service/echo-service.conf
           subPath: echo-service.conf
+          binary_data:
+            binary.dat:
+              value: ?{base64:binary_file}
           data:
             echo-service.conf:
               template: "components/echo-server/echo-server.conf.j2"
