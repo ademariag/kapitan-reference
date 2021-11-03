@@ -132,6 +132,7 @@ class ConfigMap(k8s.Base):
         super().body()
         self.add_namespace(inv.parameters.namespace)
         config = self.kwargs.config
+
         component = self.kwargs.component
         self.add_labels(component.globals.config_maps.labels)
 
@@ -141,6 +142,9 @@ class ConfigMap(k8s.Base):
             if "template" in config_spec:
                 self.root.data[key] = j2(config_spec.template, config_spec.get('values', {}))
 
+        for key, spec in config.binary_data.items():
+            if "value" in spec:
+                self.root.binaryData[key] = spec.get('value')
 
 class Secret(k8s.Base):
     def new(self):

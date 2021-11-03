@@ -272,6 +272,34 @@ metadata:
   namespace: tutorial
 ```
 
+### Binary files in config maps
+
+While `data` is the most commonly used directive, `config maps` also support the `binary_data` keyword to allow for binary files to be embedded.
+Please note that only the `value` directive is supported, and it should be used with a pre-encoded value (either from a reference file, or a base64 encoded string)
+
+```yaml
+      config_maps:
+        config:
+          binary_data:
+            binary.dat: 
+              value: ?{base64:encoded_binary_file}
+```
+
+This will create a ConfigMap resource with a binary file, taken from the specified base64 encoded reference.
+
+```yaml
+cat compiled/tutorial/manifests/echo-server-config.yml
+apiVersion: v1
+binaryData:
+  binary.dat: ?{base64:eyJkYXRhIjogIlFVR.......}
+kind: ConfigMap
+metadata:
+  labels:
+    name: echo-server
+  name: echo-server
+  namespace: tutorial
+```
+
 ### Mounting a config map
 Note that in the previous example the config map is not mounted, because the `mount` directive is missing.
 
