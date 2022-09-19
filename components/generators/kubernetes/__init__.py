@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import os
+from typing import Dict
 
 from kapitan.cached import args
 from kapitan.inputs.kadet import BaseObj, inventory
@@ -91,29 +92,6 @@ class WorkloadCommon(BaseObj):
                     },
                 }
             ]
-
-
-class NetworkPolicy(k8s.Base):
-    def new(self):
-        self.need("config")
-        self.need("workload")
-        self.kwargs.apiVersion = "networking.k8s.io/v1"
-        self.kwargs.kind = "NetworkPolicy"
-        super().new()
-
-    def body(self):
-        super().body()
-        policy = self.kwargs.config
-        workload = self.kwargs.workload
-        self.root.spec.podSelector.matchLabels = workload.metadata.labels
-        self.root.spec.ingress = policy.ingress
-        self.root.spec.egress = policy.egress
-        self.root.spec.policyTypes = []
-        if self.root.spec.ingress:
-            self.root.spec.policyTypes += ["Ingress"]
-
-        if self.root.spec.egress:
-            self.root.spec.policyTypes += ["Egress"]
 
 
 class ServiceAccount(k8s.Base):
@@ -1211,6 +1189,27 @@ class PodSecurityPolicy(k8s.Base):
             **component.get("labels", {}),
             **component.pod_security_policy.get("labels", {}),
         }
+
+
+class NetworkPolicy(k8s.BaseResource):
+    apiVersion = "networking.k8s.io/v1"
+    kind = "NetworkPolicy"
+    config = Dict
+    workload = Workload
+
+    def body(self):
+        super().body()
+        policy = self.config
+        workload = self.workload
+        self.root.spec.podSelector.matchLabels = workload.metadata.labels
+        self.root.spec.ingress = policy.ingress
+        self.root.spec.egress = policy.egress
+        self.root.spec.policyTypes = []
+        if self.root.spec.ingress:
+            self.root.spec.policyTypes += ["Ingress"]
+
+        if self.root.spec.egress:
+            self.root.spec.policyTypes += ["Egress"]
 
 
 def get_components():
